@@ -1,0 +1,44 @@
+[package]
+name = "tower-request-guard"
+version = "0.1.0"
+edition = "2021"
+license = "MIT OR Apache-2.0"
+description = "Request validation middleware for Tower"
+repository = "https://github.com/SoftDryzz/tower-request-guard"
+homepage = "https://github.com/SoftDryzz/tower-request-guard"
+documentation = "https://docs.rs/tower-request-guard"
+readme = "README.md"
+keywords = ["tower", "middleware", "validation", "request-guard", "security"]
+categories = ["web-programming", "network-programming"]
+exclude = ["docs/roadmap/**"]
+
+[dependencies]
+tower = { version = "0.5", features = ["util"] }
+tower-layer = "0.3"
+tower-service = "0.3"
+http = "1"
+http-body = "1"
+bytes = "1"
+tokio = { version = "1", features = ["time"] }
+pin-project-lite = "0.2"
+tracing = "0.1"
+
+[dependencies.http-body-util]
+version = "0.1"
+optional = true
+
+[dependencies.serde_json]
+version = "1"
+optional = true
+
+[dev-dependencies]
+axum = "0.8"
+tokio = { version = "1", features = ["full", "test-util"] }
+hyper = "1"
+tower = { version = "0.5", features = ["util"] }
+serde_json = "1"
+tracing-subscriber = "0.3"
+
+[features]
+default = []
+json = ["dep:serde_json", "dep:http-body-util"]
