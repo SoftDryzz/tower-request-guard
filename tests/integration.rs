@@ -6,7 +6,7 @@ use std::time::Duration;
 use tower_layer::Layer;
 use tower_service::Service;
 
-use tower_request_guard::{route_guard, OnViolation, RequestGuard, Violation, ViolationAction};
+use tower_request_guard::{route_guard, OnViolation, RequestGuard, ViolationAction};
 
 // ── Test helper service ──────────────────────────────────────────────
 

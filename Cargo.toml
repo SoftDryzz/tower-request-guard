@@ -2,11 +2,16 @@
 name = "tower-request-guard"
 version = "0.1.0"
 edition = "2021"
+rust-version = "1.70"
 license = "MIT OR Apache-2.0"
 description = "Request validation middleware for Tower"
 repository = "https://github.com/SoftDryzz/tower-request-guard"
+homepage = "https://github.com/SoftDryzz/tower-request-guard"
+documentation = "https://docs.rs/tower-request-guard"
+readme = "README.md"
 keywords = ["tower", "middleware", "validation", "request-guard", "security"]
 categories = ["web-programming", "network-programming"]
+exclude = ["docs/roadmap/**"]
 
 [dependencies]
 tower = { version = "0.5", features = ["util"] }

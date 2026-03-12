@@ -20,6 +20,7 @@ pub struct RequestGuard {
 }
 
 impl RequestGuard {
+    /// Create a new builder for configuring a request guard.
     pub fn builder() -> RequestGuardBuilder {
         RequestGuardBuilder::default()
     }
@@ -43,16 +44,19 @@ pub struct RequestGuardBuilder {
 }
 
 impl RequestGuardBuilder {
+    /// Set the maximum allowed body size in bytes.
     pub fn max_body_size(mut self, size: u64) -> Self {
         self.max_body_size = Some(size);
         self
     }
 
+    /// Set the per-request timeout duration.
     pub fn timeout(mut self, duration: Duration) -> Self {
         self.timeout = Some(duration);
         self
     }
 
+    /// Set the allowed Content-Type media types (e.g. `"application/json"`).
     pub fn allowed_content_types<I, S>(mut self, types: I) -> Self
     where
         I: IntoIterator<Item = S>,
@@ -62,22 +66,26 @@ impl RequestGuardBuilder {
         self
     }
 
+    /// Require a header to be present on every request.
     pub fn require_header(mut self, name: impl Into<String>) -> Self {
         self.required_headers.push(name.into());
         self
     }
 
+    /// Set the violation handling policy (default: [`OnViolation::Reject`]).
     pub fn on_violation(mut self, policy: OnViolation) -> Self {
         self.on_violation = policy;
         self
     }
 
+    /// Set the maximum allowed JSON nesting depth (requires `json` feature).
     #[cfg(feature = "json")]
     pub fn max_json_depth(mut self, depth: u32) -> Self {
         self.max_json_depth = Some(depth);
         self
     }
 
+    /// Build the [`RequestGuard`] with the configured settings.
     pub fn build(self) -> RequestGuard {
         RequestGuard {
             config: GuardConfig {

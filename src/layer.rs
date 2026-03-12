@@ -10,6 +10,7 @@ pub struct RequestGuardLayer {
 }
 
 impl RequestGuardLayer {
+    /// Create a new layer from a [`RequestGuard`].
     pub fn new(guard: RequestGuard) -> Self {
         Self {
             guard: Arc::new(guard),

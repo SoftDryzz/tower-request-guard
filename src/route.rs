@@ -20,16 +20,19 @@ pub struct RouteGuardConfig {
 }
 
 impl RouteGuardConfig {
+    /// Override the maximum body size for this route.
     pub fn max_body_size(mut self, size: u64) -> Self {
         self.max_body_size = Some(size);
         self
     }
 
+    /// Override the timeout duration for this route.
     pub fn timeout(mut self, duration: Duration) -> Self {
         self.timeout = Some(duration);
         self
     }
 
+    /// Override the allowed Content-Type list for this route.
     pub fn allowed_content_types<I, S>(mut self, types: I) -> Self
     where
         I: IntoIterator<Item = S>,
@@ -39,21 +42,25 @@ impl RouteGuardConfig {
         self
     }
 
+    /// Skip a globally-required header for this route.
     pub fn skip_header(mut self, name: impl Into<String>) -> Self {
         self.skip_headers.push(name.into());
         self
     }
 
+    /// Add an extra required header for this route.
     pub fn require_header(mut self, name: impl Into<String>) -> Self {
         self.extra_required_headers.push(name.into());
         self
     }
 
+    /// Skip all validations for this route.
     pub fn skip_all(mut self) -> Self {
         self.skip_all = true;
         self
     }
 
+    /// Override the maximum JSON depth for this route (requires `json` feature).
     #[cfg(feature = "json")]
     pub fn max_json_depth(mut self, depth: u32) -> Self {
         self.max_json_depth = Some(depth);

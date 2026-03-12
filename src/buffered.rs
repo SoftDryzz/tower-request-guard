@@ -23,6 +23,7 @@ pub struct BufferedRequestGuardLayer {
 }
 
 impl BufferedRequestGuardLayer {
+    /// Create a new buffered layer from a [`RequestGuard`].
     pub fn new(guard: RequestGuard) -> Self {
         Self {
             guard: Arc::new(guard),

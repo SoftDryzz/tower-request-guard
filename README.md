@@ -1,20 +1,36 @@
 # tower-request-guard
 
-Request validation middleware for [Tower](https://github.com/tower-rs/tower).
+**Request validation middleware for Tower.**
 
-Validates incoming requests before they reach the handler: body size limits, timeouts, content-type enforcement, required headers, and JSON depth protection — all in a single configurable layer.
+[![Crates.io](https://img.shields.io/crates/v/tower-request-guard.svg?v=1)](https://crates.io/crates/tower-request-guard)
+[![Documentation](https://docs.rs/tower-request-guard/badge.svg?v=1)](https://docs.rs/tower-request-guard)
+[![License](https://img.shields.io/crates/l/tower-request-guard.svg?v=1)](LICENSE-MIT)
 
-## Install
+Every API needs input validation before the handler runs. `tower-request-guard` replaces 3-4 separate Tower layers with a single configurable middleware: body size limits, timeouts, content-type enforcement, required headers, and JSON depth protection.
+
+## Features
+
+- **Max body size** — Reject oversized payloads via Content-Length pre-check
+- **Per-route timeout** — 504 Gateway Timeout with configurable duration per route
+- **Content-Type validation** — Media type matching with charset/parameter tolerance
+- **Required headers** — Enforce N headers (Authorization, X-Request-Id, etc.)
+- **JSON depth protection** — Anti-JSON-bomb via max nesting depth (feature `json`)
+- **Per-route overrides** — Override any setting per route with `route_guard`
+- **Dry-run mode** — `LogAndPass` logs violations without rejecting (gradual migration)
+- **Custom violation handler** — Full control with `OnViolation::custom()`
+- **Bodyless method skip** — GET/HEAD/DELETE/OPTIONS skip body checks automatically
+- **Tower-native** — Works with Axum, Tonic, Hyper, or any Tower-based framework
+
+## Quick Start
+
+Add to your `Cargo.toml`:
 
 ```toml
 [dependencies]
 tower-request-guard = "0.1"
-
-# Optional: JSON depth validation
-tower-request-guard = { version = "0.1", features = ["json"] }
 ```
 
-## Quick Start
+### Configure the Guard
 
 ```rust
 use axum::{routing::{get, post}, Router};
@@ -33,9 +49,9 @@ let app = Router::new()
     .layer(guard.layer());
 ```
 
-## Per-Route Overrides
+### Per-Route Overrides
 
-Use `route_guard` to override global settings for specific routes. `route_guard` inserts config into request extensions, so it must be applied as an **outer layer** relative to the guard — it needs to run before the guard reads the config.
+Use `route_guard` to override global settings for specific routes. Apply it as the **outer layer** relative to the guard — it inserts config into request extensions before the guard reads them.
 
 In Axum, use separate sub-routers and merge them:
 
@@ -69,7 +85,7 @@ let health = Router::new()
 let app = api.merge(upload).merge(health);
 ```
 
-## OnViolation Policies
+### OnViolation Policies
 
 Control what happens when a violation is detected:
 
@@ -89,9 +105,13 @@ use tower_request_guard::{OnViolation, ViolationAction};
 }))
 ```
 
-## JSON Depth Protection
+### JSON Depth Protection
 
 Enable the `json` feature for anti-JSON-bomb protection:
+
+```toml
+tower-request-guard = { version = "0.1", features = ["json"] }
+```
 
 ```rust
 use tower_request_guard::{BufferedRequestGuardLayer, RequestGuard};
@@ -139,19 +159,32 @@ Example response:
 | Per-route timeout | `TimeoutLayer` (global only) | Yes |
 | Content-Type validation | No | Yes (media type matching) |
 | Required headers (N) | `ValidateRequestHeader` (1) | Yes |
-| JSON depth (anti bomb) | No | Yes (feature "json") |
+| JSON depth (anti bomb) | No | Yes (feature `json`) |
 | All in one layer | No (3-4 separate layers) | Yes |
 | Per-route overrides | No | Yes (`route_guard`) |
 | Dry-run mode | No | Yes (`LogAndPass`) |
 | Bodyless method skip | Manual | Automatic |
 | Custom violation handler | No | Yes (`OnViolation::Custom`) |
 
+## Examples
+
+See the [`examples/`](examples/) directory:
+
+- [`axum_basic.rs`](examples/axum_basic.rs) — Simple global guard with Axum
+- [`axum_routes.rs`](examples/axum_routes.rs) — Per-route overrides using sub-router + merge pattern
+- [`axum_migration.rs`](examples/axum_migration.rs) — LogAndPass dry-run mode with tracing
+
 ## Companion Crate
 
-**[tower-rate-tier](https://github.com/SoftDryzz/tower-rate-tier)** — Rate limiting middleware for Tower.
+**[tower-rate-tier](https://github.com/SoftDryzz/tower-rate-tier)** — Tier-based rate limiting middleware for Tower.
 
 Together: **rate-tier** controls *how many times* you can call, **request-guard** validates *what you send* is correct and safe.
 
 ## License
 
-MIT OR Apache-2.0
+Licensed under either of:
+
+- Apache License, Version 2.0 ([LICENSE-APACHE](LICENSE-APACHE) or <http://www.apache.org/licenses/LICENSE-2.0>)
+- MIT License ([LICENSE-MIT](LICENSE-MIT) or <http://opensource.org/licenses/MIT>)
+
+at your option.
