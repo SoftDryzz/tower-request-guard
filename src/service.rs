@@ -1,6 +1,6 @@
 use crate::body::{check_content_length, is_bodyless_method};
 use crate::content_type::matches_content_type;
-use crate::guard::{GuardConfig, RequestGuard};
+use crate::guard::RequestGuard;
 use crate::headers::find_missing_header;
 use crate::response::violation_response;
 use crate::route::RouteGuardConfig;

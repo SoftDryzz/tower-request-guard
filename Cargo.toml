@@ -33,6 +33,7 @@ tokio = { version = "1", features = ["full", "test-util"] }
 hyper = "1"
 tower = { version = "0.5", features = ["util"] }
 serde_json = "1"
+tracing-subscriber = "0.3"
 
 [features]
 default = []
