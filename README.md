@@ -35,27 +35,38 @@ let app = Router::new()
 
 ## Per-Route Overrides
 
-Use `route_guard` to override global settings for specific routes:
+Use `route_guard` to override global settings for specific routes. `route_guard` inserts config into request extensions, so it must be applied as an **outer layer** relative to the guard — it needs to run before the guard reads the config.
+
+In Axum, use separate sub-routers and merge them:
 
 ```rust
 use tower_request_guard::{route_guard, RequestGuard};
 
-let app = Router::new()
+let guard_layer = guard.layer(); // Arc inside, cheap to clone
+
+// Standard routes — global guard applies as-is
+let api = Router::new()
     .route("/api/users", post(create_user))
-    .route(
-        "/api/upload",
-        post(upload).layer(route_guard(|r| {
-            r.max_body_size(10 * 1024 * 1024)          // 10 MB for uploads
-                .timeout(Duration::from_secs(120))
-                .allowed_content_types(["multipart/form-data"])
-                .skip_header("Authorization")           // uploads don't need auth
-        })),
-    )
-    .route(
-        "/api/health",
-        get(health).layer(route_guard(|r| r.skip_all())),  // no validations
-    )
-    .layer(guard.layer());
+    .layer(guard_layer.clone());
+
+// Upload — larger limits, different content type, no auth
+let upload = Router::new()
+    .route("/api/upload", post(upload))
+    .layer(guard_layer.clone())              // inner: validates
+    .layer(route_guard(|r| {                 // outer: inserts overrides
+        r.max_body_size(10 * 1024 * 1024)
+            .timeout(Duration::from_secs(120))
+            .allowed_content_types(["multipart/form-data"])
+            .skip_header("Authorization")
+    }));
+
+// Health — skip all validations
+let health = Router::new()
+    .route("/api/health", get(health))
+    .layer(guard_layer)
+    .layer(route_guard(|r| r.skip_all()));
+
+let app = api.merge(upload).merge(health);
 ```
 
 ## OnViolation Policies
