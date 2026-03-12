@@ -118,7 +118,8 @@ where
                     Ok(result) => result,
                     Err(_elapsed) => {
                         let violation = Violation::RequestTimeout {
-                            timeout_ms: timeout_duration.as_millis() as u64,
+                            timeout_ms: u64::try_from(timeout_duration.as_millis())
+                                .unwrap_or(u64::MAX),
                         };
                         let resp = handle_timeout_violation(&violation, &guard.on_violation);
                         Ok(resp.map(Into::into))

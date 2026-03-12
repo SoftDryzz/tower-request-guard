@@ -13,7 +13,7 @@ pub struct GuardConfig {
 }
 
 /// The built guard holding config and violation policy.
-#[derive(Clone)]
+#[derive(Debug, Clone)]
 pub struct RequestGuard {
     pub(crate) config: GuardConfig,
     pub(crate) on_violation: OnViolation,
