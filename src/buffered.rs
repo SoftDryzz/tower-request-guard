@@ -3,7 +3,6 @@ use crate::content_type::matches_content_type;
 use crate::guard::RequestGuard;
 use crate::headers::find_missing_header;
 use crate::json::{check_json_depth, JsonDepthError};
-use crate::response::violation_response;
 use crate::route::RouteGuardConfig;
 use crate::service::{handle_timeout_violation, handle_violation};
 use crate::violation::Violation;

@@ -105,25 +105,46 @@ mod tests {
 
     #[test]
     fn violation_status_codes() {
-        assert_eq!(Violation::BodyTooLarge { max: 100, received: 200 }.status_code(), StatusCode::PAYLOAD_TOO_LARGE);
-        assert_eq!(Violation::RequestTimeout { timeout_ms: 5000 }.status_code(), StatusCode::GATEWAY_TIMEOUT);
+        assert_eq!(
+            Violation::BodyTooLarge {
+                max: 100,
+                received: 200
+            }
+            .status_code(),
+            StatusCode::PAYLOAD_TOO_LARGE
+        );
+        assert_eq!(
+            Violation::RequestTimeout { timeout_ms: 5000 }.status_code(),
+            StatusCode::GATEWAY_TIMEOUT
+        );
         assert_eq!(
             Violation::InvalidContentType {
                 received: "text/xml".into(),
                 allowed: vec!["application/json".into()],
-            }.status_code(),
+            }
+            .status_code(),
             StatusCode::UNSUPPORTED_MEDIA_TYPE
         );
         assert_eq!(
-            Violation::MissingHeader { header: "Authorization".into() }.status_code(),
+            Violation::MissingHeader {
+                header: "Authorization".into()
+            }
+            .status_code(),
             StatusCode::BAD_REQUEST
         );
         assert_eq!(
-            Violation::JsonTooDeep { max_depth: 32, found_depth: 128 }.status_code(),
+            Violation::JsonTooDeep {
+                max_depth: 32,
+                found_depth: 128
+            }
+            .status_code(),
             StatusCode::BAD_REQUEST
         );
         assert_eq!(
-            Violation::InvalidJson { detail: "unexpected EOF".into() }.status_code(),
+            Violation::InvalidJson {
+                detail: "unexpected EOF".into()
+            }
+            .status_code(),
             StatusCode::BAD_REQUEST
         );
     }
@@ -135,6 +156,9 @@ mod tests {
 
     #[test]
     fn violation_action_default_is_reject() {
-        assert!(matches!(ViolationAction::default(), ViolationAction::Reject));
+        assert!(matches!(
+            ViolationAction::default(),
+            ViolationAction::Reject
+        ));
     }
 }

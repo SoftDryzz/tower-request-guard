@@ -76,11 +76,12 @@ impl RouteGuardConfig {
 
         // Required headers: start with global, remove skipped, add extras
         let mut required_headers = global.required_headers.clone();
-        required_headers.retain(|h| {
-            !self.skip_headers.iter().any(|s| s.eq_ignore_ascii_case(h))
-        });
+        required_headers.retain(|h| !self.skip_headers.iter().any(|s| s.eq_ignore_ascii_case(h)));
         for extra in &self.extra_required_headers {
-            if !required_headers.iter().any(|h| h.eq_ignore_ascii_case(extra)) {
+            if !required_headers
+                .iter()
+                .any(|h| h.eq_ignore_ascii_case(extra))
+            {
                 required_headers.push(extra.clone());
             }
         }
@@ -208,7 +209,9 @@ mod tests {
         };
         let merged = route.merge_with(&base_config());
         assert!(merged.required_headers.contains(&"X-Tenant-Id".to_string()));
-        assert!(merged.required_headers.contains(&"Authorization".to_string()));
+        assert!(merged
+            .required_headers
+            .contains(&"Authorization".to_string()));
     }
 
     #[test]

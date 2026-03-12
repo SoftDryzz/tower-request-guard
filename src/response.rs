@@ -65,7 +65,10 @@ fn violation_json_body(violation: &Violation) -> String {
                 escape_json_string(header)
             )
         }
-        Violation::JsonTooDeep { max_depth, found_depth } => {
+        Violation::JsonTooDeep {
+            max_depth,
+            found_depth,
+        } => {
             format!(
                 r#"{{"error":"json depth exceeded","violation":"json_too_deep","max_depth":{},"found_depth":{}}}"#,
                 max_depth, found_depth
@@ -102,7 +105,10 @@ mod tests {
 
     #[test]
     fn body_too_large_response() {
-        let v = Violation::BodyTooLarge { max: 1024, received: 2048 };
+        let v = Violation::BodyTooLarge {
+            max: 1024,
+            received: 2048,
+        };
         let resp = violation_response(&v);
         assert_eq!(resp.status(), StatusCode::PAYLOAD_TOO_LARGE);
         let body = resp.into_body();
@@ -113,7 +119,9 @@ mod tests {
 
     #[test]
     fn missing_header_response() {
-        let v = Violation::MissingHeader { header: "Authorization".into() };
+        let v = Violation::MissingHeader {
+            header: "Authorization".into(),
+        };
         let resp = violation_response(&v);
         assert_eq!(resp.status(), StatusCode::BAD_REQUEST);
         let body = resp.into_body();
@@ -147,7 +155,10 @@ mod tests {
 
     #[test]
     fn json_too_deep_response() {
-        let v = Violation::JsonTooDeep { max_depth: 32, found_depth: 128 };
+        let v = Violation::JsonTooDeep {
+            max_depth: 32,
+            found_depth: 128,
+        };
         let resp = violation_response(&v);
         assert_eq!(resp.status(), StatusCode::BAD_REQUEST);
         let body = resp.into_body();
@@ -158,7 +169,9 @@ mod tests {
 
     #[test]
     fn invalid_json_response() {
-        let v = Violation::InvalidJson { detail: "unexpected EOF".into() };
+        let v = Violation::InvalidJson {
+            detail: "unexpected EOF".into(),
+        };
         let resp = violation_response(&v);
         assert_eq!(resp.status(), StatusCode::BAD_REQUEST);
         let body = resp.into_body();
@@ -168,7 +181,9 @@ mod tests {
 
     #[test]
     fn response_escapes_untrusted_input() {
-        let v = Violation::MissingHeader { header: r#"X-Bad"Header"#.into() };
+        let v = Violation::MissingHeader {
+            header: r#"X-Bad"Header"#.into(),
+        };
         let resp = violation_response(&v);
         let body = resp.into_body();
         assert!(body.contains(r#""header":"X-Bad\"Header""#));

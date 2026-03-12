@@ -1,3 +1,5 @@
+#![cfg(feature = "json")]
+
 use bytes::Bytes;
 use http::{Request, Response, StatusCode};
 use http_body_util::Full;
@@ -35,9 +37,7 @@ fn json_request(body: &str) -> Request<Full<Bytes>> {
 
 #[tokio::test]
 async fn json_within_depth_limit_passes() {
-    let guard = RequestGuard::builder()
-        .max_json_depth(10)
-        .build();
+    let guard = RequestGuard::builder().max_json_depth(10).build();
 
     let layer = BufferedRequestGuardLayer::new(guard);
     let mut svc = layer.layer(OkService);
@@ -48,9 +48,7 @@ async fn json_within_depth_limit_passes() {
 
 #[tokio::test]
 async fn json_exceeding_depth_limit_rejected() {
-    let guard = RequestGuard::builder()
-        .max_json_depth(2)
-        .build();
+    let guard = RequestGuard::builder().max_json_depth(2).build();
 
     let layer = BufferedRequestGuardLayer::new(guard);
     let mut svc = layer.layer(OkService);
@@ -66,9 +64,7 @@ async fn json_exceeding_depth_limit_rejected() {
 
 #[tokio::test]
 async fn malformed_json_rejected() {
-    let guard = RequestGuard::builder()
-        .max_json_depth(32)
-        .build();
+    let guard = RequestGuard::builder().max_json_depth(32).build();
 
     let layer = BufferedRequestGuardLayer::new(guard);
     let mut svc = layer.layer(OkService);
@@ -81,9 +77,7 @@ async fn malformed_json_rejected() {
 
 #[tokio::test]
 async fn non_json_content_type_skips_depth_check() {
-    let guard = RequestGuard::builder()
-        .max_json_depth(1)
-        .build();
+    let guard = RequestGuard::builder().max_json_depth(1).build();
 
     let layer = BufferedRequestGuardLayer::new(guard);
     let mut svc = layer.layer(OkService);
@@ -113,7 +107,9 @@ async fn buffered_body_size_check_for_chunked() {
         .method("POST")
         .uri("/test")
         .header("content-type", "application/json")
-        .body(Full::new(Bytes::from(r#"{"large":"this body is definitely more than 10 bytes"}"#)))
+        .body(Full::new(Bytes::from(
+            r#"{"large":"this body is definitely more than 10 bytes"}"#,
+        )))
         .unwrap();
 
     let resp = svc.call(req).await.unwrap();

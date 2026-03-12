@@ -10,11 +10,10 @@ pub enum JsonDepthError {
 ///
 /// Uses serde_json::Value to parse and then walks the tree.
 pub fn check_json_depth(data: &[u8], max_depth: u32) -> Result<u32, JsonDepthError> {
-    let value: serde_json::Value = serde_json::from_slice(data).map_err(|e| {
-        JsonDepthError::Malformed {
+    let value: serde_json::Value =
+        serde_json::from_slice(data).map_err(|e| JsonDepthError::Malformed {
             detail: e.to_string(),
-        }
-    })?;
+        })?;
 
     let depth = measure_depth(&value);
     if depth > max_depth {
@@ -58,7 +57,13 @@ mod tests {
     #[test]
     fn nested_exceeds_limit() {
         let result = check_json_depth(b"{\"a\":{\"b\":{\"c\":1}}}", 2);
-        assert!(matches!(result, Err(JsonDepthError::TooDeep { found_depth: 3, max_depth: 2 })));
+        assert!(matches!(
+            result,
+            Err(JsonDepthError::TooDeep {
+                found_depth: 3,
+                max_depth: 2
+            })
+        ));
     }
 
     #[test]

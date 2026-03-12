@@ -31,6 +31,7 @@ impl RequestGuard {
 }
 
 /// Builder for RequestGuard.
+#[derive(Default)]
 pub struct RequestGuardBuilder {
     max_body_size: Option<u64>,
     timeout: Option<Duration>,
@@ -39,20 +40,6 @@ pub struct RequestGuardBuilder {
     on_violation: OnViolation,
     #[cfg(feature = "json")]
     max_json_depth: Option<u32>,
-}
-
-impl Default for RequestGuardBuilder {
-    fn default() -> Self {
-        Self {
-            max_body_size: None,
-            timeout: None,
-            allowed_content_types: None,
-            required_headers: Vec::new(),
-            on_violation: OnViolation::default(),
-            #[cfg(feature = "json")]
-            max_json_depth: None,
-        }
-    }
 }
 
 impl RequestGuardBuilder {

@@ -12,9 +12,7 @@ fn extract_media_type(content_type: &str) -> &str {
 /// Comparison is case-insensitive and ignores parameters.
 pub fn matches_content_type(content_type: &str, allowed: &[String]) -> bool {
     let media_type = extract_media_type(content_type);
-    allowed
-        .iter()
-        .any(|a| a.eq_ignore_ascii_case(media_type))
+    allowed.iter().any(|a| a.eq_ignore_ascii_case(media_type))
 }
 
 #[cfg(test)]
@@ -30,7 +28,10 @@ mod tests {
     #[test]
     fn matches_ignoring_params() {
         let allowed = vec!["application/json".to_string()];
-        assert!(matches_content_type("application/json; charset=utf-8", &allowed));
+        assert!(matches_content_type(
+            "application/json; charset=utf-8",
+            &allowed
+        ));
     }
 
     #[test]
@@ -51,7 +52,10 @@ mod tests {
             "application/json".to_string(),
             "multipart/form-data".to_string(),
         ];
-        assert!(matches_content_type("multipart/form-data; boundary=abc", &allowed));
+        assert!(matches_content_type(
+            "multipart/form-data; boundary=abc",
+            &allowed
+        ));
         assert!(!matches_content_type("text/plain", &allowed));
     }
 

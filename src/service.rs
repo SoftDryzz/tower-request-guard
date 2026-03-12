@@ -93,10 +93,7 @@ where
             if !is_bodyless {
                 if let Some(max) = effective.max_body_size {
                     if let Some(received) = check_content_length(req.headers(), max) {
-                        let violation = Violation::BodyTooLarge {
-                            max,
-                            received,
-                        };
+                        let violation = Violation::BodyTooLarge { max, received };
                         if let Some(resp) = handle_violation(&violation, &guard.on_violation) {
                             return Ok(resp.map(Into::into));
                         }
@@ -136,7 +133,10 @@ where
 
 /// Handle a pre-handler violation according to the OnViolation policy.
 /// Returns Some(response) if the request should be rejected, None if it should pass.
-pub(crate) fn handle_violation(violation: &Violation, policy: &OnViolation) -> Option<Response<String>> {
+pub(crate) fn handle_violation(
+    violation: &Violation,
+    policy: &OnViolation,
+) -> Option<Response<String>> {
     match policy {
         OnViolation::Reject => Some(violation_response(violation)),
         OnViolation::LogAndPass => {
@@ -152,7 +152,10 @@ pub(crate) fn handle_violation(violation: &Violation, policy: &OnViolation) -> O
 }
 
 /// Handle a timeout violation. LogAndPass is ignored for timeouts.
-pub(crate) fn handle_timeout_violation(violation: &Violation, policy: &OnViolation) -> Response<String> {
+pub(crate) fn handle_timeout_violation(
+    violation: &Violation,
+    policy: &OnViolation,
+) -> Response<String> {
     match policy {
         OnViolation::Custom(callback) => match callback(violation) {
             ViolationAction::RespondWith(resp) => resp,

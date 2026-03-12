@@ -15,7 +15,7 @@ use tower_request_guard::RequestGuard;
 #[tokio::main]
 async fn main() {
     let guard = RequestGuard::builder()
-        .max_body_size(1_048_576)                      // 1 MB
+        .max_body_size(1_048_576) // 1 MB
         .timeout(Duration::from_secs(30))
         .allowed_content_types(["application/json"])
         .require_header("Authorization")

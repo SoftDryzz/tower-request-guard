@@ -15,7 +15,10 @@
 //!   # Health (no validations)
 //!   curl http://localhost:3000/api/health
 
-use axum::{routing::{get, post}, Router};
+use axum::{
+    routing::{get, post},
+    Router,
+};
 use std::time::Duration;
 use tower_request_guard::{route_guard, RequestGuard};
 

@@ -6,7 +6,7 @@ use std::time::Duration;
 use tower_layer::Layer;
 use tower_service::Service;
 
-use tower_request_guard::{OnViolation, RequestGuard, Violation, ViolationAction, route_guard};
+use tower_request_guard::{route_guard, OnViolation, RequestGuard, Violation, ViolationAction};
 
 // ── Test helper service ──────────────────────────────────────────────
 
@@ -124,9 +124,7 @@ async fn rejects_missing_required_header() {
 
 #[tokio::test]
 async fn rejects_body_too_large_via_content_length() {
-    let guard = RequestGuard::builder()
-        .max_body_size(100)
-        .build();
+    let guard = RequestGuard::builder().max_body_size(100).build();
 
     let mut svc = guard.layer().layer(OkService);
     let req = Request::builder()
@@ -239,9 +237,7 @@ async fn content_type_matches_with_charset() {
 
 #[tokio::test]
 async fn route_guard_overrides_body_size() {
-    let guard = RequestGuard::builder()
-        .max_body_size(100)
-        .build();
+    let guard = RequestGuard::builder().max_body_size(100).build();
 
     let route_layer = route_guard(|r| r.max_body_size(10_000));
 
