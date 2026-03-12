@@ -19,3 +19,10 @@ pub mod json;
 
 #[cfg(feature = "json")]
 pub mod buffered;
+
+// Re-exports
+pub use guard::RequestGuard;
+pub use layer::RequestGuardLayer;
+pub use route::route_guard;
+pub use service::RequestGuardService;
+pub use violation::{OnViolation, Violation, ViolationAction};
