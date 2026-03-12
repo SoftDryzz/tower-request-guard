@@ -15,6 +15,8 @@
 
 ## v0.2 — Enhanced Validation
 
+- [ ] Streaming JSON depth checker (avoid full deserialization, O(1) memory)
+- [ ] Size-limited body collection (abort buffering once `max_body_size` exceeded)
 - [ ] Request body stream limiting (chunked transfers without full buffering)
 - [ ] IP-based allowlist/denylist
 - [ ] Custom validation hooks (user-defined `Fn(&Request) -> Result<(), Violation>`)
